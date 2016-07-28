@@ -6,8 +6,8 @@
 
 Internet Area [intarea]                                       C. Perkins
 Internet-Draft                                                 Futurewei
-Expires: January 29, 2017                                     D. Stanley
-                                                                     HPE
+Intended status: Informational                                D. Stanley
+Expires: January 29, 2017                                            HPE
                                                                W. Kumari
                                                                   Google
                                                               JC. Zuniga
@@ -89,9 +89,10 @@ Table of Contents
      5.1.  Proxy ARP in 802.11-2012  . . . . . . . . . . . . . . . .   6
      5.2.  Buffering to improve Power-Save . . . . . . . . . . . . .   7
      5.3.  IPv6 support in 802.11-2012 . . . . . . . . . . . . . . .   7
-     5.4.  Directed Multicast Service (DMS)  . . . . . . . . . . . .   7
-     5.5.  GroupCast with Retries (GCR)  . . . . . . . . . . . . . .   8
-   6.  Higher Layer Optimizations and Mitigations  . . . . . . . . .   8
+     5.4.  Conversion of Multicast to Unicast  . . . . . . . . . . .   7
+     5.5.  Directed Multicast Service (DMS)  . . . . . . . . . . . .   7
+     5.6.  GroupCast with Retries (GCR)  . . . . . . . . . . . . . .   8
+   6.  Higher Layer Optimizations and Mitigations  . . . . . . . . .   9
      6.1.  Mitigating Problems from Spurious Neighbor Discovery  . .   9
    7.  Multicast Considerations for Other Wireless Media . . . . . .  11
    8.  Security Considerations . . . . . . . . . . . . . . . . . . .  11
@@ -106,7 +107,6 @@ Table of Contents
    used for various purposes such as neighborhood discovery, network
    flooding, address resolution, as well as reduction in media access
    for data traffic.
-
 
 
 
@@ -141,7 +141,13 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
 2.  Terminology
 
-   This document defines the following terminology:
+   This document uses the following definitions:
+
+   AP
+      IEEE 802.11 Access Point.
+
+   STA
+      IEEE 802.11 station.
 
    basic rate
       a "lowest common denominator" rate at which multicast and
@@ -157,13 +163,7 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
    surrounding the use of multicast in IETF protocols over wireless
    media.
 
-   o  Multicast traffic is typically much less reliable than unicast
-      traffic.
-   o  Multicast / broadcast traffic is generally sent at a lowest common
-      denominator rate, known as a basic rate.  This might be as low as
-      6 Mbps, when unicast links are operating at 600 Mbps.
-      Transmission at a lower rate requires more occupancy of the
-      wireless medium and thus less airtime for everything else.
+
 
 
 
@@ -172,6 +172,13 @@ Perkins, et al.         Expires January 29, 2017                [Page 3]
 Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
 
+   o  Multicast traffic is typically much less reliable than unicast
+      traffic.
+   o  Multicast / broadcast traffic is generally sent at a lowest common
+      denominator rate, known as a basic rate.  This might be as low as
+      6 Mbps, when unicast links are operating at 600 Mbps.
+      Transmission at a lower rate requires more occupancy of the
+      wireless medium and thus less airtime for everything else.
    o  Wireless multicast affects wired LANs because the AP extends the
       wired segment.
 
@@ -213,13 +220,6 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
    o  ARP
    o  DHCP
-   o  mDNS
-
-   After initial configuration, ARP and DHCP occur much less commonly.
-
-
-
-
 
 
 
@@ -227,6 +227,10 @@ Perkins, et al.         Expires January 29, 2017                [Page 4]
 
 Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
+
+   o  mDNS
+
+   After initial configuration, ARP and DHCP occur much less commonly.
 
 4.2.  IPv6 uses
 
@@ -272,10 +276,6 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
    not be in use.  In the cases where the IP is assigned to a machine,
    the router broadcasts an ARP request, gets back an ARP reply, caches
    this and then can deliver traffic to the host.  In the cases where
-   the IP address is not in use, the router broadcasts one (or more) ARP
-   requests, and never gets a reply.  This means that it does not
-   populate the ARP cache, and the next time there is traffic for that
-   IP address it will broadcast ARP requests again.  The rate of these
 
 
 
@@ -284,6 +284,10 @@ Perkins, et al.         Expires January 29, 2017                [Page 5]
 Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
 
+   the IP address is not in use, the router broadcasts one (or more) ARP
+   requests, and never gets a reply.  This means that it does not
+   populate the ARP cache, and the next time there is traffic for that
+   IP address it will broadcast ARP requests again.  The rate of these
    ARP requests is proportional to the size of the subnets, the rate of
    scanning and backscatter, and how long the router keeps state on non-
    responding ARPs.  As it turns out, this rate is inversely
@@ -307,7 +311,7 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
    This section lists some optimizations that have been specified for
    use with 802.11 that are aimed at reducing or eliminating the causes
-   of performance loss discussed in section Section 3.
+   of performance loss discussed in Section 3.
 
 5.1.  Proxy ARP in 802.11-2012
 
@@ -321,17 +325,13 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
    o  STA benefits from extended power save in sleep mode, as ARP
       requests are replied to by AP.
    o  Keeps ARP frames off the wireless medium.
+   o  Changes are not needed to STA implementation.
 
    Here is the specification language from clause 10.23.13 in [2] as
    described in [dot11-proxyarp]:
 
       When the AP supports Proxy ARP "[...] the AP shall maintain a
       Hardware Address to Internet Address mapping for each associated
-      station, and shall update the mapping when the Internet Address of
-      the associated station changes.  When the IPv4 address being
-      resolved in the ARP request packet is used by a non-AP STA
-      currently associated to the BSS, the proxy ARP service shall
-      respond on behalf of the non-AP STA"
 
 
 
@@ -339,6 +339,12 @@ Perkins, et al.         Expires January 29, 2017                [Page 6]
 
 Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
+
+      station, and shall update the mapping when the Internet Address of
+      the associated station changes.  When the IPv4 address being
+      resolved in the ARP request packet is used by a non-AP STA
+      currently associated to the BSS, the proxy ARP service shall
+      respond on behalf of the non-AP STA"
 
 5.2.  Buffering to improve Power-Save
 
@@ -372,9 +378,24 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
    802.11.  Using the proxy operation helps to keep NDP messages off the
    wireless medium.
 
-5.4.  Directed Multicast Service (DMS)
+5.4.  Conversion of Multicast to Unicast
 
-   DMS enables a client to request that the AP transmit multicast group
+   It is often possible to transmit control and data messages by using
+   unicast transmissions to each station individually.
+
+5.5.  Directed Multicast Service (DMS)
+
+   There are situations where more is needed than simply converting
+   multicast to unicast [citation needed].  For these purposes, DMS
+   enables a client to request that the AP transmit multicast group
+
+
+
+Perkins, et al.         Expires January 29, 2017                [Page 7]
+
+Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+
+
    addressed frames destined to the requesting clients as individually
    addressed frames [i.e., convert multicast to unicast].
 
@@ -384,19 +405,10 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
    o  Requesting STA may specify traffic characteristics for DMS traffic
    o  DMS was defined in IEEE Std 802.11v-2011
 
-   DMS is not currently implemented in products.
+   DMS is not currently implemented in products.  DMS does require
+   changes to both AP and STA implementation.
 
-
-
-
-
-
-Perkins, et al.         Expires January 29, 2017                [Page 7]
-
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
-
-
-5.5.  GroupCast with Retries (GCR)
+5.6.  GroupCast with Retries (GCR)
 
    GCR (defined in [dot11aa]) provides greater reliability by using
    either unsolicited retries or a block acknowledgement mechanism.  GCR
@@ -412,7 +424,8 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
    GCR is suitable for all group sizes including medium to large groups.
    As the number of devices in the group increases, GCR can send block
-   acknowledgement requests to only a small subset of the group.
+   acknowledgement requests to only a small subset of the group.  GCR
+   does require changes to both AP and STA implementation.
 
    GCR may introduce unacceptable latency.  After sending a group of
    data frames to the group, the AP has do the following:
@@ -431,6 +444,14 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
    o  BA is sent using uplink MU-MIMO (which is a .11ax feature).
    o  Additional 802.11ax extensions are under consideration; see
       [mc-ack-mux]
+
+
+
+Perkins, et al.         Expires January 29, 2017                [Page 8]
+
+Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+
+
    o  Latency may also be reduced by simultaneously receiving BA
       information from multiple clients.
 
@@ -439,18 +460,6 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
    This section lists some optimizations that have been specified for
    use with 802.11 that are aimed at reducing or eliminating the causes
    of performance loss discussed in section Section 6.
-
-
-
-
-
-
-
-
-Perkins, et al.         Expires January 29, 2017                [Page 8]
-
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
-
 
 6.1.  Mitigating Problems from Spurious Neighbor Discovery
 
@@ -490,6 +499,15 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
    Firewall unused space
 
+
+
+
+
+Perkins, et al.         Expires January 29, 2017                [Page 9]
+
+Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+
+
          The distribution of users on wireless networks / subnets
          changes from meeting to meeting (e.g the "IETF-secure" SSID was
          renamed to "IETF", fewer users use "IETF-legacy", etc).  This
@@ -500,14 +518,6 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
          addresses from the lower portions of it.  This means that we
          can apply input IP access lists, which deny traffic to the
          upper, unused portions.  This means that the router does not
-
-
-
-Perkins, et al.         Expires January 29, 2017                [Page 9]
-
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
-
-
          attempt to forward packets to the unused portions of the
          subnets, and so does not ARP for it.  This method has proven to
          be very effective, but is somewhat of a blunt axe, is fairly
@@ -546,6 +556,14 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
          Another obvious solution would be to put a stateful firewall
          between the wireless network and the Internet.  This firewall
+
+
+
+Perkins, et al.         Expires January 29, 2017               [Page 10]
+
+Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+
+
          would block incoming traffic not associated with an outbound
          request.  The IETF philosophy has been to have the network as
          open as possible / honor the end-to-end principle.  An attendee
@@ -554,15 +572,6 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
          keeping the network working and stable is the first priority
          and a stateful firewall may be required in order to achieve
          this.
-
-
-
-
-
-Perkins, et al.         Expires January 29, 2017               [Page 10]
-
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
-
 
 7.  Multicast Considerations for Other Wireless Media
 
@@ -602,15 +611,6 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
    [dot11-proxyarp]
               P802.11, , "Proxy ARP in 802.11ax", September 2015.
 
-   [dot11aa]  P802.11, , "Part 11: Wireless LAN Medium Access Control
-              (MAC) and Physical Layer (PHY) Specifications Amendment 2:
-              MAC Enhancements for Robust Audio Video Streaming", March
-              2012.
-
-   [mc-ack-mux]
-              Yusuke Tanaka et al., , "Multiplexing of Acknowledgements
-              for Multicast Transmission", July 2015.
-
 
 
 
@@ -619,6 +619,15 @@ Perkins, et al.         Expires January 29, 2017               [Page 11]
 
 Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
+
+   [dot11aa]  P802.11, , "Part 11: Wireless LAN Medium Access Control
+              (MAC) and Physical Layer (PHY) Specifications Amendment 2:
+              MAC Enhancements for Robust Audio Video Streaming", March
+              2012.
+
+   [mc-ack-mux]
+              Yusuke Tanaka et al., , "Multiplexing of Acknowledgements
+              for Multicast Transmission", July 2015.
 
    [mc-prob-stmt]
               Mikael Abrahamsson and Adrian Stephens, , "Multicast on
@@ -658,15 +667,6 @@ Authors' Addresses
    Email: dstanley@arubanetworks.com
 
 
-   Warren Kumari
-   Google
-   1600 Amphitheatre Parkway
-   Mountain View, CA  94043
-   USA
-
-   Email: warren@kumari.net
-
-
 
 
 
@@ -676,6 +676,15 @@ Perkins, et al.         Expires January 29, 2017               [Page 12]
 Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
 
+   Warren Kumari
+   Google
+   1600 Amphitheatre Parkway
+   Mountain View, CA  94043
+   USA
+
+   Email: warren@kumari.net
+
+
    Juan Carlos Zuniga
    InterDigital
    1000 Sherbrooke W, 10th Floor
@@ -683,15 +692,6 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
    Canada
 
    Email: j.c.zuniga@ieee.org
-
-
-
-
-
-
-
-
-
 
 
 
