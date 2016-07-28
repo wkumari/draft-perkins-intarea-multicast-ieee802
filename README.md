@@ -11,7 +11,7 @@ Expires: January 29, 2017                                            HPE
                                                                W. Kumari
                                                                   Google
                                                               JC. Zuniga
-                                                            InterDigital
+                                                                  SIGFOX
                                                            July 28, 2016
 
 
@@ -686,7 +686,7 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
 
    Juan Carlos Zuniga
-   InterDigital
+   SIGFOX
    425 rue Jean Rostand
    Labege  31670
    France
