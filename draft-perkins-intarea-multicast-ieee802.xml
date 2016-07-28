@@ -1,0 +1,807 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes"?>
+<?rfc tocompact="yes"?>
+<?rfc tocdepth="3"?>
+<?rfc tocindent="yes"?>
+<?rfc symrefs="yes"?>
+<!-- use symbolic references tags, i.e, [RFC2119] instead of [1] -->
+<?rfc sortrefs="yes" ?>
+<!-- sort the reference entries alphabetically -->
+<!-- control vertical white space 
+     (using these PIs as follows is recommended by the RFC Editor) -->
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+<?rfc compact="yes" ?>
+<!-- do not start each main section on a new page -->
+<?rfc subcompact="yes" ?>
+<!--  ?rfc subcompact="no" ?  -->
+<!-- keep one blank line between list items -->
+<?rfc strict="yes" ?>
+<!-- give errors regarding ID-nits and DTD validation -->
+<!--
+==================================== 80 ========================================
+==================================== 72 ================================
+ -->
+
+<rfc ipr="trust200902"
+		docName='draft-perkins-intarea-multicast-ieee802-00.txt' >
+  <front>
+<title abbrev="Multicast Over IEEE 802 Wireless">
+	Multicast Considerations over IEEE 802 Wireless Media</title>
+
+   <author fullname="Charles E. Perkins" initials="C.E." surname="Perkins">
+      <organization abbrev="Futurewei">Futurewei Inc. </organization>
+      <address>
+        <postal>
+          <street>2330 Central Expressway</street>
+          <city>Santa Clara</city>
+          <code>95050</code>
+          <region>CA</region>
+          <country>USA</country>
+        </postal>
+        <phone>+1-408-330-4586</phone>
+        <email>charliep@computer.org</email>
+      </address>
+    </author>
+
+
+   <author fullname="Dorothy Stanley" initials="D" surname="Stanley">
+      <organization abbrev="HPE">Hewlett Packard Enterprise </organization>
+      <address>
+        <postal>
+          <street>2000 North Naperville Rd.</street>
+          <city>Naperville</city>
+          <code>60566</code>
+          <region>IL</region>
+          <country>USA</country>
+        </postal>
+        <phone>+1 630 979 1572</phone>
+        <email>dstanley@arubanetworks.com</email>
+      </address>
+    </author>
+
+   <author fullname="Warren Kumari" initials="W" surname="Kumari">
+      <organization abbrev="Google">Google </organization>
+      <address>
+        <postal>
+          <street>1600 Amphitheatre Parkway</street>
+          <city>Mountain View</city>
+          <code>94043</code>
+          <region>CA</region>
+          <country>USA</country>
+        </postal>
+        <email>warren@kumari.net</email>
+      </address>
+    </author>
+
+
+   <author fullname="Juan Carlos Zuniga" initials="JC" surname="Zuniga">
+      <organization abbrev="InterDigital">InterDigital </organization>
+      <address>
+        <postal>
+          <street>1000 Sherbrooke W, 10th Floor</street>
+          <city>Montreal</city>
+          <code>H3A 3G4</code>
+          <region>QC</region>
+          <country>Canada</country>
+        </postal>
+        <email>j.c.zuniga@ieee.org</email>
+      </address>
+    </author>
+
+
+    <date/>  <!-- day="25" month="October" year="2010" /> -->
+
+  <area>Routing</area>
+  <workgroup>Internet Area [intarea]</workgroup>
+<keyword>Multicast</keyword>
+<keyword>IEEE 802 Wireless</keyword>
+<abstract>
+
+<t>
+	This document describes some performance issues that have been observed
+	when multicast packet transmission is attempted over IEEE 802 wireless
+	media.  Multicast features specified for IEEE 802 wireless media
+	related to multicast are also described, along with explanations about
+	how these features can help ameliorate the observed performance issues.
+	IETF protocols that are likely to be affected by the observed
+	performance issues are identified, and workarounds are proposed
+	in some cases.
+
+	The performance of multicast over wireless media often can be quite
+	different than the performance of unicast.  This draft describes the
+	nature of the differences and the effects on representative IETF
+	protocols. We also describe some efforts that have been made by
+	IEEE 802 Wireless groups to ameliorate the performance differences.
+</t>
+</abstract>
+
+</front>
+<middle>
+<section anchor='intro' title='Introduction'>
+
+<t>	
+Many IETF protocol designs depend upon multicast or broadcast for delivery
+of control messages to multiple receivers.  Multicast is used for various
+purposes such as neighborhood discovery, network flooding, address resolution,
+as well as reduction in media access for data traffic.
+</t>
+
+<t>
+IETF protocols typically expect to rely on network protocol layering in
+order to reduce or eliminate any dependence of higher level protocols on
+the specific nature of the MAC layer protocols or the physical media.
+In the case of multicast transmission, higher level protocols may be designed
+as if transmitting a packet to an IP address has the same cost in
+interference and network media access, regardless of whether the destination
+IP address is a unicast address or a multicast or broadcast address.
+This model of operation was reasonable for networks where the physical
+medium was like an Ethernet.
+</t>
+
+<t>
+Unfortunately, for many wireless media, the costs can be quite different.
+It is the purpose of this Internet Draft to identify the ways in which the
+costs can be different.  Using this information, we then proceed to identify
+some possible effects on the actual operation of IETF protocols over
+wireless media.
+</t>
+
+<t>
+IEEE 802 Wireless working groups, especially 802.11, have made a number
+of attempts to improve the performance of multicast transmissions at layer 2.
+In this draft we also include a description of some of these efforts.  This
+information is closely related to material presented at IETF 94
+[cite 11-15-1261-03]
+</t>
+
+</section>
+
+<section anchor='def' title="Terminology">
+
+<!--
+      <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
+      "MAY", and "OPTIONAL" in this document are to be interpreted as
+      described in <xref target="RFC2119" />.</t>
+
+      <t>This document also uses some terminology from <xref
+      target="RFC5444" />.</t>
+  -->
+
+      <t>This document defines the following terminology:</t>
+
+      <t><list style="hanging">
+
+        <t hangText="basic rate"><vspace /> 
+        	a "lowest common denominator" rate at which multicast
+        	and broadcast traffic is generally transmitted.</t>
+		<t><vspace /></t>
+        <t hangText="MCS"><vspace /> 
+        	Modulation and Coding Scheme.</t>
+		<t><vspace /></t>
+	</list></t>
+	<!-- <t><vspace blankLines="19" /></t>  -->
+</section>	 
+
+<section anchor='layer2' title='Identified Issues at Layer 2'>
+
+<t>
+	In this section we list some of the issues arising at layer 2
+	surrounding the use of multicast in IETF protocols over wireless media.
+</t>
+
+<t>
+   <list style="symbols">
+   <t> Multicast traffic is typically much less reliable than unicast traffic.
+       </t>
+   <t> Multicast / broadcast traffic is generally sent at a lowest common
+       denominator rate,  known as a basic rate.  This might be as low
+       as 6 Mbps,  when unicast links are operating at 600 Mbps.
+       Transmission at a lower rate requires more occupancy of the wireless
+       medium and thus less airtime for everything else.</t>
+   <t> Wireless multicast affects wired LANs because the AP
+       extends the wired segment.
+       <list style="symbols">
+       <t> All broadcast frames on LAN side are copied to WLAN.</t>
+       <t> In WLAN, broadcast messages transmitted at most robust MCS.</t>
+       <t> Most robust MCS implies large frames sent at slow rate.</t>
+       </list></t>
+   <t> Multicast can work poorly with the power-save mechanisms in 802.11.
+       <list style="symbols">
+       <t> Both unicast and multicast traffic can be delayed by power-saving
+        mechanisms.</t> 
+       <t> Unicast is delayed until a STA wakes up and asks for it. 
+        Additionally,  unicast traffic may be delayed to improve power save,
+        efficiency and increase probability of aggregation.</t>
+       <t> Multicast traffic is delayed in a wireless network if any of the STAs
+        in that network are power savers.  All STAs have to be awake at a
+        known time to receive multicast traffic.</t>  
+       <t> Packets can also be discarded due to buffer limitations in the AP
+        and non-AP STA.</t>
+       </list></t>
+
+   </list>
+</t>
+</section>	 
+
+<section anchor='ietf-effects'
+   title='Some Possible Effects on Representative IETF protocols'>
+
+<t>
+	In this section we list some of the issues arising at layer 3
+	surrounding the use of multicast in IETF protocols over wireless media.
+	We mention a few representative IETF protocols, and
+	describe some possible effects due to performance degradation when
+	using multicast transmissions for control messages. Common uses include:
+   <list style="symbols">
+	<t> Control plane for IPv4 and IPv6 </t>
+	<t> ARP and Neighbor Discovery </t>
+	<t> Service discovery </t>
+	<t> Applications (video delivery, stock data etc) </t>
+	<t> Other L3 protocols (non-IP) </t>
+   </list>
+</t>
+
+<section anchor='IPv4' title='IPv4 uses'>
+
+<t>
+	The following list contains a few representative IPv4 protocols using
+	multicast.
+   <list style="symbols">
+	<t> ARP </t>
+	<t> DHCP </t>
+	<t> mDNS </t>
+   </list>
+   After initial configuration, ARP and DHCP occur much less commonly.
+</t>
+
+</section> <!-- 'IPv4 uses' -->
+
+<section anchor='IPv6' title='IPv6 uses'>
+
+	<t>
+	    The following list contains a few representative IPv6 protocols
+	    using multicast.  IPv6 makes much more extensive use of multicast.
+	    <list style="symbols">
+	    <t> DHCPv6 </t>
+	    <t> Liveness detection (NUD) </t>
+	    <t> Some control plane protocols are not very tolerant of packet
+	        loss, especially neighbor discovery.</t>
+	    <t> Services may be considered lost if several consecutive
+	        packets fail.</t>
+	    </list>
+	 </t>
+	 
+	<t>Address Resolution</t>
+
+	<t>Service Discovery</t>
+
+	<t>Route Discovery</t>
+
+	<t>Decentralized Address Assignment</t>
+
+	<t>Geographic routing</t>
+
+
+</section> <!-- 'IPv6 uses' -->
+
+<section anchor='mld' title='Disabling Multicast on WiFi'>
+<t>
+	Multicast Listener Discovery(MLD) <xref target="RFC4541" /> is
+	often used to identify members of a multicast group that are connected
+	to the ports of a switch.  Forwarding multicast frames into a
+	WiFi-enabled area can use such switch support for hardware forwarding
+	state information.   However, since IPv6 makes heavy use of multicast,
+	each STA with an IPv6 address will require state on the switch for
+	several and possibly many multicast solicited-node addresses.
+	Multicast addresses that do not have forwarding state installed
+	(perhaps due to hardware memory limitations on the switch) cause
+	frames to be flooded on all ports of the switch.
+</t>
+
+</section> <!-- 'Disabling Multicast on WiFi' -->
+
+<section anchor='spurious ' title='Spurious Neighbor Discovery'>
+
+<t>
+	On the Internet there is a "background radiation" of scanning
+	traffic (people scanning for vulnerable machines) and backscatter
+	(responses from spoofed traffic, etc). This means that the router
+	is constantly getting packets destined for machines whose IP addresses
+	may or may not be in use. In the cases where the IP is assigned to a
+	machine, the router broadcasts an ARP request, gets back an ARP reply,
+	caches this and then can deliver traffic to the host. In the cases
+	where the IP address is not in use, the router broadcasts one (or more)
+	ARP requests, and never gets a reply. This means that it does not
+	populate the ARP cache, and the next time there is traffic for that
+	IP address it will broadcast ARP requests again. The rate of these
+	ARP requests is proportional to the size of the subnets, the rate of
+	scanning and backscatter, and how long the router keeps state on
+	non-responding ARPs. As it turns out, this rate
+	is inversely proportional to how occupied the subnet is (valid ARPs
+	end up in a cache, stopping the broadcasting; unused IPs never respond,
+	and so cause more broadcasts). Depending on the address space in use,
+	the time of day, how occupied the subnet is, and other unknown factors,
+	on the order of 2000 broadcasts per second have been observed
+	at the IETF NOCs.
+</t>
+
+<t>
+	On a wired network, there is not a huge difference amongst unicast,
+	multicast and broadcast traffic; but this is not true in the wireless
+	realm. Wireless equipment often is unable to send this
+	amount of broadcast and multicast traffic. Consequently, on the
+	wireless networks, we observe a significant amount of dropped
+	broadcast and multicast packets. This, in turn, means that when
+	a host connects it is often not able to complete DHCP, and IPv6 RAs
+	get dropped, leading to users being unable to use the network.
+</t>
+
+
+</section>	 <!-- 'layer3' title='Spurious Neighbor Discovery' -->
+
+</section> <!-- 'Some Possible Effects on Representative IETF protocols' -->
+
+<section anchor='optim2' title='Layer 2 optimizations'>
+
+<t>
+	This section lists some optimizations that have been specified for
+	use with 802.11 that are aimed at reducing or eliminating the
+	causes of performance loss discussed in
+	section <xref target="layer2"/>.
+</t>
+
+<section anchor='proxy-arp' title='Proxy ARP in 802.11-2012'>
+
+<t>
+	The AP knows all associated STAs MAC address and IP address;
+	in other words, the AP acts as the central "manager" for all the
+	802.11 STAs in its BSS.  Proxy ARP is easy to implement at the AP,
+	and offers the following advantages:
+	<list style="symbols">
+	<t> Reduced broadcast traffic (transmitted at low MCS) on
+	    the wireless medium </t>
+	<t> STA benefits from extended power save in sleep mode,
+	    as ARP requests are replied to by AP. </t>
+	<t> Keeps ARP frames off the wireless medium. </t>
+	</list>
+</t>
+
+	<t> Here is the specification language from clause 10.23.13 in [2]
+	    as described in <xref target="dot11-proxyarp"/>:
+	<list style="empty">
+	<t> When the AP supports Proxy ARP "[...] the AP shall maintain a
+	    Hardware Address to Internet Address mapping for each associated
+	    station, and shall update the mapping when the Internet Address of
+	    the associated station changes. When the IPv4 address being
+	    resolved in the ARP request packet is used by a non-AP STA
+	    currently associated to the BSS, the proxy ARP service shall
+	    respond on behalf of the non-AP STA" </t>
+	</list>
+</t>
+
+</section>
+
+<section anchor='buffer' title='Buffering to improve Power-Save'>
+
+<t>
+	The AP acts on behalf of STAs in various ways.  In order to
+	improve the power-saving feature for STAs in its BSS, the AP
+	buffers frames for delivery to the STA at the time when the
+	STA is scheduled for reception.
+</t>
+
+</section> <!-- 'Buffering to improve Power-Save'  -->
+
+<section anchor='ipv6' title='IPv6 support in 802.11-2012'>
+
+	<t> IPv6 uses Neighbor Discovery Protocol (NDP) instead
+	    Every IPv6 node subscribes to special multicast address
+	    Neighbor-Solicitation message replaces ARP
+	</t>
+	
+	<t> Here is the specification language from-10.23.13 in [2]:
+	<list style="empty">
+	    <t> "When an IPv6 address is being resolved, the Proxy Neighbor
+	         Discovery service shall respond with a Neighbor Advertisement
+	         message [...] on behalf of an associated STA to an [ICMPv6]
+	         Neighbor Solicitation message [...]. When MAC address mappings
+	         change, the AP may send unsolicited Neighbor Advertisement
+	         Messages on behalf of a STA." </t>
+	</list> </t>
+
+	<t> NDP may be used to request additional information
+	<list style="symbols">
+		<t> Maximum Transmission Unit </t>
+		<t> Router Solicitation </t>
+		<t> Router Advertisement, etc. </t>
+	</list>
+	NDP messages are sent as group addressed (broadcast) frames in 802.11.
+	Using the proxy operation helps to keep NDP messages off the wireless
+	medium. </t>
+
+</section> <!-- 'IPv6 support in 802.11-2012' -->
+
+<section anchor='DMS' title='Directed Multicast Service (DMS)'>
+
+	<t> DMS enables a client to request that the AP transmit multicast
+	    group addressed frames destined to the requesting clients as
+	    individually addressed frames [i.e., convert multicast to unicast].
+	    <list style="symbols">
+	    <t> DMS Requires 802.11n A-MSDUs  </t>
+	    <t> Individually addressed frames are acknowledged and are
+	        buffered for power save clients </t>
+	    <t> Requesting STA may specify traffic characteristics for DMS
+	        traffic</t>
+	    <t> DMS was defined in IEEE Std 802.11v-2011 </t>
+	    </list>
+	    DMS is not currently implemented in products.
+	</t>
+
+</section> <!-- 'Directed Multicast Service (DMS)' -->
+
+<section anchor='GCR' title='GroupCast with Retries (GCR)'>
+
+	<t> GCR (defined in <xref target="dot11aa"/>) provides greater
+	    reliability by using either unsolicited
+	    retries or a block acknowledgement mechanism.
+	    GCR increases probability of broadcast frame reception success,
+            but still does not guarantee success.
+	</t>
+	<t> For the block acknowledgement mechanism, the AP transmits each
+	    group addressed frame as conventional group addressed transmission.
+	    Retransmissions are group addressed, but hidden from non-11aa
+	    clients. A directed block acknowledgement scheme is used to
+	    harvest reception status from receivers; retransmissions are
+	    based upon these responses.  
+	</t>
+	<t> GCR is suitable for all group sizes including medium to large
+	    groups.  As the number of devices in the group increases, GCR can
+	    send block acknowledgement requests to only a small subset of the
+	    group. 
+	</t>
+	<t> GCR may introduce unacceptable latency.  After sending a group
+	    of data frames to the group, the AP has do the following:
+	    <list style="symbols">
+	    <t> unicast a Block Ack Request (BAR) to a subset of members.</t>
+	    <t> wait for the corresponding Block Ack (BA).</t>
+	    <t> retransmit any missed frames.</t>
+            <t> resume other operations which may have been delayed.</t>
+	    </list>
+        This latency may not be acceptable for some traffic.
+	</t>
+	<t> There are ongoing extensions in 802.11 to improve GCR performance.
+	    <list style="symbols">
+	    <t> BAR is sent using downlink MU-MIMO (note that downlink MU-MIMO
+	        is already specified in 802.11-REVmc 4.3).</t> 
+	    <t> BA is sent using uplink MU-MIMO (which is a .11ax feature).</t>
+	    <t> Additional 802.11ax extensions are under consideration;
+                see <xref target="mc-ack-mux" /></t>
+	    <t> Latency may also be reduced by simultaneously receiving BA
+	        information from multiple clients.</t>
+	    </list>
+	</t>
+
+</section> <!-- 'GroupCast with Retries (GCR)' -->
+
+</section> <!-- 'Layer 2 optimizations' -->
+
+<section anchor='optim3' title='Higher Layer Optimizations and Mitigations'>
+
+<t>
+	This section lists some optimizations that have been specified for
+	use with 802.11 that are aimed at reducing or eliminating the
+	causes of performance loss discussed in
+	section <xref target="optim3"/>.
+</t>
+
+<section anchor='mitigate-spurious'
+	title='Mitigating Problems from Spurious Neighbor Discovery'>
+
+	<t>
+	<list style="hanging" hangIndent="6">
+	<t hangText="ARP Sponges"><vspace blankLines="1"/>
+	    ARP Sponges sit on a network and learn what IPs addresses are
+	    actually in use. They also listen for ARP requests, and, if it
+	    sees an ARP for an IP address which it believes is not used, it
+	    will reply with its own MAC address. This means that the router
+	    now has an IP to MAC mapping, which it caches. If that IP is
+	    later assigned to an machine (e.g using DHCP), the ARP sponge
+	    will see this, and will stop replying for that address.
+	    Gratuitous ARPs (or the machine ARPing for its gateway) will
+	    replace the sponged address in the router ARP table. This
+	    technique is quite effective; but, unfortunately, the ARP
+	    sponge daemons were not really designed for this use (the
+	    standard one <xref target="arpsponge" />, was designed to deal
+	    with the disappearance of participants from an IXP)
+	    and so are not optimized for this purpose. We have to run one
+	    daemon per subnet, the tuning is tricky (the scanning rate
+	    versus the population rate versus retires, etc.) and sometimes
+	    the daemons just seem to stop, requiring a restart of the
+	    daemon and causing disruption.
+	<vspace blankLines="1"/>
+	</t>
+	<t hangText="Router mitigations"><vspace blankLines="1"/>
+	    Some routers (often those based on Linux) implement a
+	    "negative ARP cache" daemon. Simply put, if the router does
+	    not see a reply to an ARP it can be configured to cache this
+	    information for some interval. Unfortunately, the core routers
+	    which we are using do not support this. When a host connects
+	    to network and gets an IP address, it will ARP for its default
+	    gateway (the router). The router will update its cache with
+	    the IP to host MAC mapping learnt from the request (passive
+	    ARP learning).
+	<vspace blankLines="1"/></t>
+
+	<t hangText="Firewall unused space"><vspace blankLines="1"/>
+	    The distribution of users on wireless networks / subnets changes
+	    from meeting to meeting (e.g the "IETF-secure" SSID was renamed
+	    to "IETF", fewer users use "IETF-legacy", etc). This utilization
+	    is difficult to predict ahead of time, but we can monitor the
+	    usage as attendees use the different networks. By configuring
+	    multiple DHCP pools per subnet, and enabling them sequentially,
+	    we can have a large subnet, but only assign addresses from the
+	    lower portions of it. This means that we can apply input IP
+	    access lists, which deny traffic to the upper, unused portions.
+	    This means that the router does not attempt to forward packets
+	    to the unused portions of the subnets, and so does not ARP for it.
+	    This method has proven to be very effective, but is somewhat of a
+	    blunt axe, is fairly labor intensive, and requires coordination.
+	<vspace blankLines="1"/></t>
+
+	<t hangText="Disabling/filtering ARP requests"><vspace blankLines="1"/>
+	    In general, the router does not need to ARP for hosts; when a host
+	    connects, the router can learn the IP to MAC mapping from the ARP
+	    request sent by that host. This means that we should be able to
+	    disable and / or filter ARP requests from the router.
+	    Unfortunately, ARP is a very low level / fundamental part of the
+	    IP stack, and is often offloaded from the normal control plane.
+	    While many routers can filter layer-2 traffic, this is usually
+	    implemented as an input filter and / or has limited ability to
+	    filter output broadcast traffic. This means that the simple
+	    "just disable ARP or filter it outbound" seems like a really
+	    simple (and obvious) solution, but implementations / architectural
+	    issues make this difficult or awkward in practice.
+	<vspace blankLines="1"/>
+	</t>
+	<t hangText="NAT"><vspace blankLines="1"/>
+	    The broadcasts are overwhelmingly being caused by outside
+	    scanning / backscatter traffic. This means that, if we were to
+	    NAT the entire (or a large portion) of the attendee networks,
+	    there would be no NAT translation entries for unused addresses,
+	    and so the router would never ARP for them. The IETF NOC has
+	    discussed NATing the entire (or large portions) attendee address
+	    space, but a: elegance and b: flaming torches and pitchfork
+	    concerns means we have not attempted this yet.
+	<vspace blankLines="1"/>
+	</t>
+	<t hangText="Stateful firewalls"><vspace blankLines="1"/>
+	    Another obvious solution would be to put a stateful firewall
+	    between the wireless network and the Internet. This firewall
+	    would block incoming traffic not associated with an outbound
+	    request. The IETF philosophy has been to have the network as
+	    open as possible / honor the end-to-end principle. An attendee
+	    on the meeting network should be an Internet host, and should
+	    be able to receive unsolicited requests.
+	    Unfortunately, keeping the network working and
+	    stable is the first priority and a stateful firewall may
+	    be required in order to achieve this.
+	</t>
+	</list>
+	</t>
+</section> <!-- 'Mitigating Problems from Spurious Neighbor Discovery' -->
+
+
+</section> <!-- 'Layer 3 optimizations' -->
+
+
+
+<section anchor='other-media'
+	title='Multicast Considerations for Other Wireless Media'>
+
+<t>
+	Many of the causes of performance degradation described in earlier
+	sections are also observable for wireless media other than 802.11.
+</t>
+<t>
+	For instance, problems with power save, excess media occupancy,
+	and poor reliability will also affect 802.15.3 and 802.15.4.
+	However, 802.15 media specifications do not include similar
+	mechanisms of the type that have been developed for 802.11.
+	In fact, the design philosophy for 802.15 is more oriented
+	towards minimality, with the result that many such functions
+	would more likely be relegated to operation within higher layer
+	protocols.  This leads to a patchwork of non-interoperable
+	and vendor-specific solutions. See <xref target="uli" /> for
+	some additional discussion, and a proposal for a task group
+	to resolve similar issues, in which the multicast problems
+	might be considered for mitigation.
+</t>
+
+
+</section> <!-- 'Multicast Considerations for Other Wireless Media' -->
+
+
+
+<section anchor='sec' title='Security Considerations'>
+
+<t>
+	This document does not introduce any security mechanisms,
+	and does not have any impact on existing security mechanisms.
+</t>
+
+
+</section>
+
+<section anchor='iana' title='IANA Considerations'>
+
+<t>
+	This document does not specify any IANA actions.
+</t>
+
+</section>
+
+</middle>
+
+<back>
+
+<references title="Informative References">
+
+<!-- <?rfc include='reference.RFC.2119.xml'?> -->
+
+<?rfc include='reference.RFC.4541.xml'?>
+
+<reference anchor="uli">
+  <front>
+    <title>LLC Proposal for 802.15.4</title>
+    <author surname="Pat Kinney">
+    <organization> "IEEE 802 Wireless"</organization>
+    <address>
+    <uri>https://mentor.ieee.org/802.15/dcn/15/15-15-0521-01-wng0-llc-proposal-for-802-15-4.pptx</uri>
+    </address>
+    </author>
+    <date month="Nov" year="2015"/>
+  </front>
+</reference>
+
+<reference anchor="mc-ack-mux">
+  <front>
+    <title>Multiplexing of Acknowledgements for Multicast Transmission</title>
+    <author surname="Yusuke Tanaka et al.">
+    <organization> "IEEE 802 Wireless"</organization>
+    <address>
+    <uri>https://mentor.ieee.org/802.11/dcn/15/11-15-0800-00-00ax-multiplexing-of-acknowledgements-for-multicast-transmission.pptx</uri>
+    </address>
+    </author>
+    <date month="July" year="2015"/>
+  </front>
+</reference>
+
+<reference anchor="dot11">
+  <front>
+    <title> Part 11: Wireless LAN Medium Access Control
+	    (MAC) and Physical Layer (PHY) Specifications</title>
+    <author surname="P802.11">
+    <organization> "IEEE 802 Wireless" </organization>
+    <address>
+    <uri>http://standards.ieee.org/getieee802/download/802.11-2012.pdf (includes 802.11v amendment)</uri>
+    </address>
+    </author>
+    <date month="March" year="2012"/>
+  </front>
+</reference>
+
+<reference anchor="mc-props">
+  <front>
+    <title>IEEE 802.11 multicast properties</title>
+    <author surname="Adrian Stephens">
+    <organization> "IEEE 802 Wireless" </organization>
+    <address>
+    <uri>https://mentor.ieee.org/802.11/dcn/15/11-15-1161-02-0arc-802-11-multicast-properties.ppt</uri>
+    </address>
+    </author>
+    <date month="March" year="2015"/>
+  </front>
+</reference>
+
+<reference anchor="arpsponge">
+  <front>
+    <title>Arp Sponge</title>
+    <author surname="Arien Vijn, Steven Bakker">
+    <organization> "AMS" </organization>
+    <address>
+    <uri>https://ams-ix.net/downloads/arpsponge/3.12.2/arpsponge-3.12.2/arpsponge.txt</uri>
+    </address>
+    </author>
+    <date month="March" year="2015"/>
+  </front>
+</reference>
+
+
+<reference anchor="dot11-proxyarp">
+  <front>
+    <title>Proxy ARP in 802.11ax</title>
+    <author surname="P802.11">
+    <organization> "IEEE 802 Wireless" </organization>
+    <address>
+    <uri>https://mentor.ieee.org/802.11/dcn/15/11-15-1015-01-00ax-proxy-arp-in-802-11ax.pptx</uri>
+    </address>
+    </author>
+    <date month="September" year="2015"/>
+  </front>
+</reference>
+
+<reference anchor="dot11aa">
+  <front>
+    <title> Part 11: Wireless LAN Medium Access Control
+	    (MAC) and Physical Layer (PHY) Specifications
+	    Amendment 2: MAC Enhancements for
+	    Robust Audio Video Streaming</title>
+    <author surname="P802.11">
+    <organization> "IEEE 802 Wireless" </organization>
+    <address>
+    <uri>http://standards.ieee.org/getieee802/download/802.11aa-2012.pdf</uri>
+    </address>
+    </author>
+    <date month="March" year="2012"/>
+  </front>
+</reference>
+
+<reference anchor="mc-prob-stmt">
+  <front>
+    <title>Multicast on 802.11</title>
+    <author surname="Mikael Abrahamsson and Adrian Stephens">
+    <organization> "IAB, IEEE 802 Wireless" </organization>
+    <address>
+    <uri>https://www.iab.org/wp-content/IAB-uploads/2013/01/multicast-problem-statement.pptx</uri>
+    </address>
+    </author>
+    <date month="March" year="2015"/>
+  </front>
+</reference>
+
+<!--
+<reference anchor="dot15mc">
+  <front>
+    <title>IEEE 802.15.4 and ZigBee as Enabling Technologies</title>
+    <author surname='Stefano Tennina et al.'>
+    <organization>
+    </organization>
+    <address>
+    <uri>https://www.iab.org/wp-content/IAB-uploads/2013/01/multicast-problem-statement.pptx</uri>
+    </address>
+    </author>
+    <date month="March" year="2015"/>
+  </front>
+</reference>
+
+    <author surname='Stefano Tennina, Anis Koubaa, Roberta Daidone,
+                     Mario Alves, et al.'>
+		     Koubaa had first 'a' with caret
+		     Mario had 'a' with accent
+  -->
+</references>
+
+
+<!--
+
+<section anchor="acknowledgements" title="Acknowledgements">
+
+<t>
+        This document stems from discussions with the following people,
+        in alphabetical order:
+                Warren Kumari.
+
+</t>
+
+</section>
+ -->
+
+
+</back>
+
+</rfc>
+
