@@ -34,7 +34,7 @@
 different way...?
 
 -->
-<rfc category="info" docName="draft-perkins-intarea-multicast-ieee802-00.txt"
+<rfc category="info" docName="draft-perkins-intarea-multicast-ieee802-01"
      ipr="trust200902">
   <front>
     <title abbrev="Multicast Over IEEE 802 Wireless">Multicast Considerations
@@ -124,17 +124,17 @@ different way...?
       </address>
     </author>
 
-    <date/>
+    <date day="14" month="September" year="2016"/>
 
     <!-- day="25" month="October" year="2010" /> -->
 
     <area>Routing</area>
 
-    <workgroup>Internet Area [intarea]</workgroup>
+    <workgroup>Internet Area</workgroup>
 
     <keyword>Multicast</keyword>
 
-    <keyword>IEEE 802 Wireless</keyword>
+    <keyword>IEEE 802 Wireless Multicast</keyword>
 
     <abstract>
       <t>This document describes some performance issues that have been

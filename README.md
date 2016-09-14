@@ -4,19 +4,19 @@
 
 
 
-Internet Area [intarea]                                       C. Perkins
+Internet Area                                                 C. Perkins
 Internet-Draft                                                 Futurewei
 Intended status: Informational                                D. Stanley
-Expires: January 29, 2017                                            HPE
+Expires: March 18, 2017                                              HPE
                                                                W. Kumari
                                                                   Google
                                                               JC. Zuniga
                                                                   SIGFOX
-                                                           July 28, 2016
+                                                      September 14, 2016
 
 
          Multicast Considerations over IEEE 802 Wireless Media
-             draft-perkins-intarea-multicast-ieee802-00.txt
+               draft-perkins-intarea-multicast-ieee802-01
 
 Abstract
 
@@ -49,15 +49,15 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 29, 2017.
+   This Internet-Draft will expire on March 18, 2017.
 
 
 
 
 
-Perkins, et al.         Expires January 29, 2017                [Page 1]
+Perkins, et al.          Expires March 18, 2017                 [Page 1]
 
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+Internet-Draft      Multicast Over IEEE 802 Wireless      September 2016
 
 
 Copyright Notice
@@ -111,9 +111,9 @@ Table of Contents
 
 
 
-Perkins, et al.         Expires January 29, 2017                [Page 2]
+Perkins, et al.          Expires March 18, 2017                 [Page 2]
 
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+Internet-Draft      Multicast Over IEEE 802 Wireless      September 2016
 
 
    IETF protocols typically rely on network protocol layering in order
@@ -167,9 +167,9 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
 
 
-Perkins, et al.         Expires January 29, 2017                [Page 3]
+Perkins, et al.          Expires March 18, 2017                 [Page 3]
 
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+Internet-Draft      Multicast Over IEEE 802 Wireless      September 2016
 
 
    o  Multicast / broadcast traffic is generally sent at a lowest common
@@ -223,9 +223,9 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
 
 
-Perkins, et al.         Expires January 29, 2017                [Page 4]
+Perkins, et al.          Expires March 18, 2017                 [Page 4]
 
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+Internet-Draft      Multicast Over IEEE 802 Wireless      September 2016
 
 
    After initial configuration, ARP and DHCP occur much less commonly.
@@ -279,9 +279,9 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
 
 
-Perkins, et al.         Expires January 29, 2017                [Page 5]
+Perkins, et al.          Expires March 18, 2017                 [Page 5]
 
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+Internet-Draft      Multicast Over IEEE 802 Wireless      September 2016
 
 
    populate the ARP cache, and the next time there is traffic for that
@@ -335,9 +335,9 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
 
 
-Perkins, et al.         Expires January 29, 2017                [Page 6]
+Perkins, et al.          Expires March 18, 2017                 [Page 6]
 
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+Internet-Draft      Multicast Over IEEE 802 Wireless      September 2016
 
 
       resolved in the ARP request packet is used by a non-AP STA
@@ -391,9 +391,9 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
 
 
-Perkins, et al.         Expires January 29, 2017                [Page 7]
+Perkins, et al.          Expires March 18, 2017                 [Page 7]
 
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+Internet-Draft      Multicast Over IEEE 802 Wireless      September 2016
 
 
    o  DMS Requires 802.11n A-MSDUs
@@ -447,9 +447,9 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
 
 
-Perkins, et al.         Expires January 29, 2017                [Page 8]
+Perkins, et al.          Expires March 18, 2017                 [Page 8]
 
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+Internet-Draft      Multicast Over IEEE 802 Wireless      September 2016
 
 
 6.  Higher Layer Optimizations and Mitigations
@@ -503,9 +503,9 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
 
 
-Perkins, et al.         Expires January 29, 2017                [Page 9]
+Perkins, et al.          Expires March 18, 2017                 [Page 9]
 
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+Internet-Draft      Multicast Over IEEE 802 Wireless      September 2016
 
 
          configuring multiple DHCP pools per subnet, and enabling them
@@ -559,9 +559,9 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
 
 
-Perkins, et al.         Expires January 29, 2017               [Page 10]
+Perkins, et al.          Expires March 18, 2017                [Page 10]
 
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+Internet-Draft      Multicast Over IEEE 802 Wireless      September 2016
 
 
          and a stateful firewall may be required in order to achieve
@@ -615,9 +615,9 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
 
 
-Perkins, et al.         Expires January 29, 2017               [Page 11]
+Perkins, et al.          Expires March 18, 2017                [Page 11]
 
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+Internet-Draft      Multicast Over IEEE 802 Wireless      September 2016
 
 
    [mc-ack-mux]
@@ -671,9 +671,9 @@ Authors' Addresses
 
 
 
-Perkins, et al.         Expires January 29, 2017               [Page 12]
+Perkins, et al.          Expires March 18, 2017                [Page 12]
 
-Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
+Internet-Draft      Multicast Over IEEE 802 Wireless      September 2016
 
 
    Warren Kumari
@@ -727,5 +727,5 @@ Internet-Draft      Multicast Over IEEE 802 Wireless           July 2016
 
 
 
-Perkins, et al.         Expires January 29, 2017               [Page 13]
+Perkins, et al.          Expires March 18, 2017                [Page 13]
 ```
